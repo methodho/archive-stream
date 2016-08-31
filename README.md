@@ -110,14 +110,18 @@ public class MyController {
 	    try {
 	      BufferedInputStream in = new BufferedInputStream(file.getInputStream());
 	      ArchiveStream.of(in).forEach((archiveEntry, archiveEntryIn) -> {
-	        Path path = Paths.get(ROOT, file.getOriginalFilename(), entry.getName());
-	        if (archiveEntry.isDirectory()) {
-	          Files.createDirectories(path);
-	        } else {
-	          Files.createDirectories(path.getParent());
-	          Files.copy(archiveEntryIn, path, StandardCopyOption.REPLACE_EXISTING);
-	        }
-	      });
+	          try {
+	            Path path = Paths.get(ROOT, file.getOriginalFilename(), archiveEntry.getName());
+	            if (archiveEntry.isDirectory()) {
+	              Files.createDirectories(path);
+	            } else {
+	              Files.createDirectories(path.getParent());
+	              Files.copy(archiveEntryIn, path, StandardCopyOption.REPLACE_EXISTING);
+	            }
+	          } catch (Exception e) {
+	            throw new RuntimeException(e);
+	          }
+	        });
 	    } catch (IOException | ArchiveException | RuntimeException e) {
 	      log.error("Something went wrong when extracting [{}]", file.getOriginalFilename(), e);
 	    }
