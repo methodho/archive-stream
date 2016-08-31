@@ -101,34 +101,34 @@ public class MyController {
 @Controller
 public class MyController {
 
-	public static final String ROOT = "some-upload-dir";
-	
-	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String upload(@RequestParam("file") MultipartFile file) {
-		if (!file.isEmpty()) {
-			try {
-				BufferedInputStream in = new BufferedInputStream(file.getInputStream());
-				ArchiveStream.of(in).forEach((archiveEntry, archiveEntryIn) -> {
-					try {
-						Path path = Paths.get(ROOT, file.getOriginalFilename(), archiveEntry.getName());
-						if (archiveEntry.isDirectory()) {
-							Files.createDirectories(path);
-						} else {
-							Files.createDirectories(path.getParent());
-							Files.copy(archiveEntryIn, path, StandardCopyOption.REPLACE_EXISTING);
-						}
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				});
-			} catch (IOException | ArchiveException | RuntimeException e) {
-				log.error("Something went wrong when extracting [{}]", file.getOriginalFilename(), e);
-			}
-		} else {
-			log.error("Failed to upload [{}] because it was empty", file.getOriginalFilename());
-		}
-		
-		return "redirect:/some-path";
-	}
+  public static final String ROOT = "some-upload-dir";
+
+  @RequestMapping(value = "/upload", method = RequestMethod.POST)
+  public String upload(@RequestParam("file") MultipartFile file) {
+    if (!file.isEmpty()) {
+      try {
+        BufferedInputStream in = new BufferedInputStream(file.getInputStream());
+        ArchiveStream.of(in).forEach((archiveEntry, archiveEntryIn) -> {
+          try {
+            Path path = Paths.get(ROOT, file.getOriginalFilename(), archiveEntry.getName());
+            if (archiveEntry.isDirectory()) {
+              Files.createDirectories(path);
+            } else {
+              Files.createDirectories(path.getParent());
+              Files.copy(archiveEntryIn, path, StandardCopyOption.REPLACE_EXISTING);
+            }
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+        });
+      } catch (IOException | ArchiveException | RuntimeException e) {
+        log.error("Something went wrong when extracting [{}]", file.getOriginalFilename(), e);
+      }
+    } else {
+      log.error("Failed to upload [{}] because it was empty", file.getOriginalFilename());
+    }
+
+    return "redirect:/some-path";
+  }
 }
 ```
