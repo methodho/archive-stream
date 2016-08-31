@@ -109,17 +109,8 @@ public class MyController {
       try {
         BufferedInputStream in = new BufferedInputStream(file.getInputStream());
         ArchiveStream.of(in).forEach((archiveEntry, archiveEntryIn) -> {
-          try {
-            Path path = Paths.get(ROOT, file.getOriginalFilename(), archiveEntry.getName());
-            if (archiveEntry.isDirectory()) {
-              Files.createDirectories(path);
-            } else {
-              Files.createDirectories(path.getParent());
-              Files.copy(archiveEntryIn, path, StandardCopyOption.REPLACE_EXISTING);
-            }
-          } catch (Exception e) {
-            throw new RuntimeException(e);
-          }
+          Path path = Paths.get(ROOT, file.getOriginalFilename(), archiveEntry.getName());
+          saveTo(archiveEntry, archiveEntryIn, path);
         });
       } catch (IOException | ArchiveException | RuntimeException e) {
         log.error("Something went wrong when extracting [{}]", file.getOriginalFilename(), e);
@@ -129,6 +120,19 @@ public class MyController {
     }
 
     return "redirect:/some-path";
+  }
+  
+  private void saveTo(ArchiveEntry entry, ArchiveInputStream in, Path path) {
+    try {
+      if (entry.isDirectory()) {
+        Files.createDirectories(path);
+      } else {
+        Files.createDirectories(path.getParent());
+        Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }
 ```
