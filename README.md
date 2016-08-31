@@ -34,7 +34,7 @@ It will auto detected the archive type by the first entry.key of map:
 - `org.apache.commons.compress.archivers.jar.JarArchiveEntry`
 - `org.apache.commons.compress.archivers.cpio.CpioArchiveEntry`
 
-You can detemine the type on your own:
+Or you can detemine the type on your own:
 
 ```java
 Map<ArchiveEntry, InputStream> archives = new HashMap<>();
