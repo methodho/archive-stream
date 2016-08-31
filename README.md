@@ -114,6 +114,11 @@ public class MyController {
         });
       } catch (IOException | ArchiveException | RuntimeException e) {
         log.error("Something went wrong when extracting [{}]", file.getOriginalFilename(), e);
+        try {
+          Files.deleteIfExists(Paths.get(ROOT, file.getOriginalFilename()));
+        } catch (IOException ioe) {
+          throw new UncheckedIOException(ioe);
+        }
       }
     } else {
       log.error("Failed to upload [{}] because it was empty", file.getOriginalFilename());
