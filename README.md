@@ -130,8 +130,8 @@ public class MyController {
         Files.createDirectories(path.getParent());
         Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
       }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 }
