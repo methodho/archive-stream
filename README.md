@@ -1,6 +1,6 @@
 # Archive Stream
 
-This library integrate Java Stream API  with apache-compress. Read on to see if it's right for you.
+This library integrate apache-compress into Java Stream API. Read on to see if it's right for you
 
 ## Usage
 
