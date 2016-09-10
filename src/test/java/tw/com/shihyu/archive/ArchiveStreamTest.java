@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -54,14 +55,18 @@ public class ArchiveStreamTest {
     Assert.assertTrue(zip.isFile());
     Assert.assertTrue(zip.length() > 0);
 
-    Map<String, String> entries = ArchiveStream
+    Map<String, String> entries;
+    try (Stream<String[]> stream = ArchiveStream
         .of(new BufferedInputStream(new FileInputStream(zip))).mapToObj((entity, in) -> {
           try {
             return new String[] {entity.getName(), new String(IOUtils.toByteArray(in))};
           } catch (IOException e) {
             throw new RuntimeException(e);
           }
-        }).filter(o -> !o[0].equals("__MACOSX")).collect(Collectors.toMap(o -> o[0], o -> o[1]));
+        })) {
+      entries = stream.filter(o -> !o[0].equals("__MACOSX"))
+          .collect(Collectors.toMap(o -> o[0], o -> o[1]));
+    }
     Assert.assertEquals(contents.size(), entries.size());
     entries.forEach((k, v) -> {
       String content = contents.get(k);

@@ -11,6 +11,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -62,6 +63,8 @@ public final class ArchiveStream {
     <U> Stream<U> mapToObj(BiFunction<ArchiveEntry, ArchiveInputStream, U> mapper)
         throws IOException, ArchiveException;
 
+    <U> Stream<U> flatMapToObj(BiFunction<ArchiveEntry, ArchiveInputStream, Stream<U>> mapper)
+        throws IOException, ArchiveException;
   }
 
   public static ArchiveStreamWriter of(OutputStream out) {
@@ -149,11 +152,19 @@ public final class ArchiveStream {
       }
 
       @Override
+      public <U> Stream<U> flatMapToObj(
+          BiFunction<ArchiveEntry, ArchiveInputStream, Stream<U>> mapper)
+          throws IOException, ArchiveException {
+        return mapToObj(mapper).flatMap(Function.identity());
+      }
+
+      @Override
       public void forEach(BiConsumer<ArchiveEntry, ArchiveInputStream> action)
           throws IOException, ArchiveException {
         mapToObj((entity, in) -> new Object[] {entity, in})
             .forEach(read -> action.accept((ArchiveEntry) read[0], (ArchiveInputStream) read[1]));
       }
+
     };
   }
 
