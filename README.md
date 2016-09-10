@@ -65,14 +65,17 @@ InputStream zipIn = new ArchiveStreamFactory()
 ArchiveStream.of(zipIn)...
 ```
 
-Use `mapToObj(...)` to map to `java.util.Stream`:
+Use `mapToObj(...)` or `flatMapToObj(...)` to map to `java.util.Stream`:
+
+> REMEMBER to close by Stream.close() or use try-with-resources
 
 ```java
 File zip = ... // your zip file
 InputStream zipIn = new BufferedInputStream(new FileInputStream(zip));
-List<MyObject> content = ArchiveStream.of(zipIn)
-            .mapToObj((archiveEntry, archiveEntryIn) -> {...})
-            ...
+try (Stream<U> stream = List<MyObject> content = ArchiveStream.of(zipIn)
+            .mapToObj((archiveEntry, archiveEntryIn) -> {...})) {
+            stream...
+}
 ```
 
 ## Example
