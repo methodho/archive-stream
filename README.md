@@ -72,8 +72,8 @@ Use `mapToObj(...)` or `flatMapToObj(...)` to map to `java.util.Stream`:
 ```java
 File zip = ... // your zip file
 InputStream zipIn = new BufferedInputStream(new FileInputStream(zip));
-try (Stream<U> stream = List<MyObject> content = ArchiveStream.of(zipIn)
-            .mapToObj((archiveEntry, archiveEntryIn) -> {...})) {
+try (Stream<U> stream = ArchiveStream
+    .of(zipIn).mapToObj((archiveEntry, archiveEntryIn) -> {...})) {
             stream...
 }
 ```
